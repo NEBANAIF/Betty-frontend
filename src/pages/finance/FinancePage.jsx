@@ -206,7 +206,7 @@ function TransactionsLedger({ from, to, scopeParams, canSeeProfit }) {
     <div className="card card-pad">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm font-semibold text-ink-700">Transaction ledger</p>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto">
           <ExportButton
             title="Financial Transactions" columns={exportColumns} scoped
             dateField="occurredOn" dateLabel="Transaction date"

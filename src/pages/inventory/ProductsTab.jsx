@@ -458,7 +458,7 @@ function ProductFormModal({
         <Field label="SKU">
           <input required className="input" value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} />
         </Field>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="Unit">
             <input required placeholder="pcs, box..." className="input" value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })} />
           </Field>
@@ -471,7 +471,7 @@ function ProductFormModal({
         </Field>
 
         {(showInitialStock || product) && (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Field label={product ? 'Stock on Hand' : 'Initial Stock'}>
               <input
                 type="number"

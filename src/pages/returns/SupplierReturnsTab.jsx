@@ -91,7 +91,7 @@ export default function SupplierReturnsTab() {
         active={Boolean(from || to || listSearch)} onClear={() => { setPage(0); setFrom(''); setTo(''); setListSearch(''); }}
       >
         <FilterField label="Supplier or PO #">
-          <SearchInput value={listSearch} onChange={(v) => { setPage(0); setListSearch(v); }} placeholder="Search supplier name or PO #…" width="w-64" />
+          <SearchInput value={listSearch} onChange={(v) => { setPage(0); setListSearch(v); }} placeholder="Search supplier name or PO #…" width="w-full sm:w-64" />
         </FilterField>
       </FilterBar>
 

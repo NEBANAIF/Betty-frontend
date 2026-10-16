@@ -165,7 +165,7 @@ export default function SalesHistoryPage() {
               </div>
             )}
 
-            <table className="w-full text-sm">
+            <div className="-mx-1 overflow-x-auto px-1"><table className="w-full min-w-[420px] text-sm">
               <thead>
                 <tr className="border-b border-cream-200 text-left text-xs uppercase text-ink-400">
                   <th className="py-1.5 pr-3 font-medium">Product</th>
@@ -186,7 +186,7 @@ export default function SalesHistoryPage() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
 
             <div className="flex flex-wrap justify-end gap-x-6 gap-y-1 border-t border-cream-200 pt-3 text-sm">
               <Totals label="Discount" value={selectedSale.discountAmount} />

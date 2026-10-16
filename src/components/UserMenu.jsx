@@ -50,7 +50,7 @@ export default function UserMenu() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full z-30 mt-2 w-56 overflow-hidden rounded-xl border border-cream-300 bg-cream-50 py-1 shadow-overlay"
+          className="absolute right-0 top-full z-30 mt-2 w-56 max-w-[calc(100vw-1.5rem)] overflow-hidden rounded-xl border border-cream-300 bg-cream-50 py-1 shadow-overlay"
         >
           <div className="border-b border-cream-200 px-3 py-2 sm:hidden">
             <p className="truncate text-sm font-medium text-ink-900">{user?.name}</p>

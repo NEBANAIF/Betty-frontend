@@ -138,7 +138,7 @@ export default function TransfersPage() {
             </ElegantSelect>
           </FilterField>
           <FilterField label="Transfer #">
-            <SearchInput value={search} onChange={(v) => { setPage(0); setSearch(v); }} placeholder="Search transfer number…" width="w-52" />
+            <SearchInput value={search} onChange={(v) => { setPage(0); setSearch(v); }} placeholder="Search transfer number…" width="w-full sm:w-52" />
           </FilterField>
           <FilterField label="Product" className="min-w-[200px] max-w-xs flex-1">
             <ProductSelect key={productBoxKey} value={product} onChange={(p) => { setPage(0); setProduct(p); }} placeholder="All products — type to pick one…" />
@@ -174,7 +174,7 @@ export default function TransfersPage() {
               <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">Rejected: {selected.rejectionReason}</p>
             )}
 
-            <table className="w-full text-sm">
+            <div className="-mx-1 overflow-x-auto px-1"><table className="w-full min-w-[420px] text-sm">
               <thead>
                 <tr className="border-b border-cream-200 text-left text-xs uppercase text-ink-400">
                   <th className="py-1.5 pr-3 font-medium">Product</th>
@@ -195,7 +195,7 @@ export default function TransfersPage() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
 
             {actionError && <p className="alert alert-error">{actionError}</p>}
 
@@ -286,7 +286,7 @@ function CreateTransferModal({ open, onClose, onCreated }) {
   return (
     <Modal open={open} title="New Transfer Request" onClose={onClose} wide>
       <form onSubmit={submit} className="space-y-3">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <label className="block"><span className="mb-1 block text-xs font-medium text-ink-500">Source Branch</span>
             <select required className="input" value={form.sourceBranchId} onChange={(e) => setForm({ ...form, sourceBranchId: e.target.value })}>
               <option value="">Select...</option>
@@ -308,8 +308,8 @@ function CreateTransferModal({ open, onClose, onCreated }) {
           </div>
           <div className="space-y-2">
             {form.items.map((item, idx) => (
-              <div key={idx} className="flex items-center gap-2">
-                <div className="min-w-0 flex-1">
+              <div key={idx} className="flex flex-wrap items-center gap-2">
+                <div className="min-w-[180px] flex-1">
                   <ProductSelect
                     value={item.product}
                     onChange={(product) => updateLine(idx, { product })}

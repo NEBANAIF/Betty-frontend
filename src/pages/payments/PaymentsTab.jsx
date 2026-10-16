@@ -133,7 +133,7 @@ export default function PaymentsTab() {
 
   return (
     <div>
-      <div className="mb-3 flex flex-wrap items-end gap-3">
+      <div className="mb-3 flex justify-end">
         <ExportButton
           title="Payments" columns={EXPORT_COLUMNS} scoped
           dateField="createdAt" dateLabel="Payment date"
@@ -149,9 +149,12 @@ export default function PaymentsTab() {
             to: endOfDay(serverTo),
           })}
         />
+      </div>
+
+      <div className="mb-3 flex flex-wrap items-end gap-3">
         <label className="block">
           <span className="label">Customer or sale #</span>
-          <input type="search" className="input w-56" placeholder="Name, phone or sale number…" value={filters.search}
+          <input type="search" className="input w-full sm:w-56" placeholder="Name, phone or sale number…" value={filters.search}
             onChange={(e) => setFilter('search', e.target.value)} />
         </label>
         <label className="block">

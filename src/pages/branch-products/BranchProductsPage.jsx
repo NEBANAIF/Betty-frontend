@@ -73,12 +73,12 @@ export default function BranchProductsPage() {
       </p>
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
-        <select className="input w-64" value={branchId} onChange={(e) => { setBranchId(e.target.value); setPage(0); }}>
+        <select className="input w-full sm:w-64" value={branchId} onChange={(e) => { setBranchId(e.target.value); setPage(0); }}>
           {branches.map((b) => (
             <option key={b.id} value={b.id}>{b.name} · {b.type === 'STORE' ? 'Store' : 'Warehouse'}</option>
           ))}
         </select>
-        <div className="w-64">
+        <div className="w-full sm:w-64">
           <SearchInput value={search} onChange={setSearch} placeholder="Search products…" />
         </div>
       </div>

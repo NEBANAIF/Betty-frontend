@@ -110,7 +110,7 @@ export default function LoansPage() {
           active={filtersActive} onClear={clearFilters}
         >
           <FilterField label="Customer or sale #">
-            <SearchInput value={search} onChange={(v) => { setPage(0); setSearch(v); }} placeholder="Search customer name, phone or sale #…" width="w-64" />
+            <SearchInput value={search} onChange={(v) => { setPage(0); setSearch(v); }} placeholder="Search customer name, phone or sale #…" width="w-full sm:w-64" />
           </FilterField>
           <FilterField label="Status">
             <ElegantSelect value={statusFilter} onChange={(v) => { setPage(0); setStatusFilter(v); }} ariaLabel="Filter by loan status" minWidth={170}>

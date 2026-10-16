@@ -112,7 +112,7 @@ export default function BatchesPage() {
     <div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h1 className="page-title">Batches</h1>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto">
           <ExportButton
             title="Batches" columns={EXPORT_COLUMNS(hasPermission('VIEW_COSTS'))} scoped productFilter
             dateField="receivedDate" dateLabel="Received date"
@@ -361,7 +361,7 @@ function StockChangeModal({ open, mode, onClose, onSubmitted }) {
           </label>
         )}
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <label className="block"><span className="mb-1 block text-xs font-medium text-ink-500">
             Quantity{form.product?.unit ? ` (${form.product.unit})` : ''}
           </span>
@@ -381,7 +381,7 @@ function StockChangeModal({ open, mode, onClose, onSubmitted }) {
         </div>
 
         {adding && (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <label className="block"><span className="mb-1 block text-xs font-medium text-ink-500">Received date</span>
               <input type="date" max={toLocalIsoDate(new Date())} className="input" value={form.receivedDate} onChange={(e) => setForm({ ...form, receivedDate: e.target.value })} />
             </label>

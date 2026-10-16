@@ -96,8 +96,8 @@ export default function UsersPage() {
     <div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h1 className="page-title">Users</h1>
-        <div className="flex items-center gap-2">
-          <SearchInput value={search} onChange={(v) => { setPage(0); setSearch(v); }} placeholder="Search name or email…" width="w-56" />
+        <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto">
+          <SearchInput value={search} onChange={(v) => { setPage(0); setSearch(v); }} placeholder="Search name or email…" width="w-full sm:w-56" />
           <ExportButton
             title="Users" columns={EXPORT_COLUMNS}
             dateField="createdAt" dateLabel="Created date"

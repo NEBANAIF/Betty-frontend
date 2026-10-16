@@ -123,7 +123,7 @@ export default function ExportButton({
 
   return (
     <>
-      <button type="button" onClick={openDialog} disabled={disabled} className={`btn btn-secondary btn-sm ${className}`} title={`Export ${title}`}>
+      <button type="button" onClick={openDialog} disabled={disabled} className={`btn btn-secondary btn-sm ml-auto ${className}`} title={`Export ${title}`}>
         <Icon name="download" size={14} /> Export
       </button>
 
@@ -142,7 +142,7 @@ export default function ExportButton({
                   </button>
                 ))}
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <label className="block">
                   <span className="mb-1 block text-xs font-medium text-ink-500">From</span>
                   <input type="date" className="input" value={from} max={to || undefined} onChange={(e) => setFrom(e.target.value)} />

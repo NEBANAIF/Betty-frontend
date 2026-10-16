@@ -138,7 +138,7 @@ export default function PurchasesPage() {
             </ElegantSelect>
           </FilterField>
           <FilterField label="Order # or supplier">
-            <SearchInput value={search} onChange={(v) => { setPage(0); setSearch(v); }} placeholder="Search order # or supplier…" width="w-52" />
+            <SearchInput value={search} onChange={(v) => { setPage(0); setSearch(v); }} placeholder="Search order # or supplier…" width="w-full sm:w-52" />
           </FilterField>
           <FilterField label="Product" className="min-w-[200px] max-w-xs flex-1">
             <ProductSelect key={productBoxKey} value={product} onChange={(p) => { setPage(0); setProduct(p); }} placeholder="All products — type to pick one…" />
@@ -169,7 +169,7 @@ export default function PurchasesPage() {
               <Info label="Approved By" value={selected.approvedByName || '—'} />
             </div>
 
-            <table className="w-full text-sm">
+            <div className="-mx-1 overflow-x-auto px-1"><table className="w-full min-w-[420px] text-sm">
               <thead>
                 <tr className="border-b border-cream-200 text-left text-xs uppercase text-ink-400">
                   <th className="py-1.5 pr-3 font-medium">Product</th>
@@ -190,7 +190,7 @@ export default function PurchasesPage() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
 
             <div className="flex justify-end border-t border-cream-200 pt-3 text-sm font-semibold">
               Total: {formatMoney(selected.total)}
@@ -369,7 +369,7 @@ function CreatePurchaseOrderModal({ open, onClose, onCreated }) {
   return (
     <Modal open={open} title="New Purchase Order" onClose={onClose} wide>
       <form onSubmit={submit} className="space-y-3">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {isSuperAdmin && (
             <label className="col-span-2 block"><span className="mb-1 block text-xs font-medium text-ink-500">Receiving Branch</span>
               <select required className="input" value={form.branchId} onChange={(e) => setForm({ ...form, branchId: e.target.value })}>
@@ -396,8 +396,8 @@ function CreatePurchaseOrderModal({ open, onClose, onCreated }) {
           </div>
           <div className="space-y-2">
             {form.items.map((item, idx) => (
-              <div key={idx} className="flex items-center gap-2">
-                <div className="min-w-0 flex-1">
+              <div key={idx} className="flex flex-wrap items-center gap-2">
+                <div className="min-w-[180px] flex-1">
                   <ProductSelect
                     value={item.product}
                     onChange={(product) => updateLine(idx, { product })}

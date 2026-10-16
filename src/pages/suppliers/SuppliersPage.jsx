@@ -114,7 +114,7 @@ export default function SuppliersPage() {
 
         <FilterBar active={activeFilter !== '' || search !== ''} onClear={() => { setActiveFilter(''); setSearch(''); }}>
           <FilterField label="Search">
-            <SearchInput value={search} onChange={setSearch} placeholder="Name, phone, email or tax no…" width="w-64" />
+            <SearchInput value={search} onChange={setSearch} placeholder="Name, phone, email or tax no…" width="w-full sm:w-64" />
           </FilterField>
           <FilterField label="Status">
             <ElegantSelect value={activeFilter} onChange={setActiveFilter} ariaLabel="Filter by status" minWidth={150}>

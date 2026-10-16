@@ -12,7 +12,7 @@ export default function Topbar({ onOpenMenu }) {
 
   return (
     <header
-      className="sticky top-0 z-20 flex min-h-14 flex-wrap items-center justify-between gap-y-2 gap-x-3 px-3 py-2 sm:flex-nowrap sm:px-5"
+      className="sticky top-0 z-20 flex min-h-14 flex-nowrap items-center justify-between gap-x-2 px-3 py-2 sm:gap-x-3 sm:px-5"
       style={{
         background: 'var(--bg-translucent)',
         borderBottom: '1px solid rgba(140,128,70,0.18)',
@@ -21,7 +21,7 @@ export default function Topbar({ onOpenMenu }) {
         fontFamily: 'var(--font-ui)',
       }}
     >
-      <div className="flex min-w-0 basis-full items-center gap-2 sm:basis-auto sm:gap-3">
+      <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
         <button onClick={onOpenMenu} className="btn-icon md:hidden" aria-label="Open menu">
           <Icon name="menu" size={20} />
         </button>
@@ -39,7 +39,7 @@ export default function Topbar({ onOpenMenu }) {
         <BranchSelector />
       </div>
 
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex shrink-0 items-center gap-1 sm:gap-3">
         <NotificationBell />
         <UserMenu />
       </div>

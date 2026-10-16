@@ -25,7 +25,7 @@ export default function AppLayout() {
 
   return (
     <NotificationCountsProvider>
-    <div className="flex h-screen overflow-hidden" style={{ background: 'var(--bg)' }}>
+    <div className="flex h-screen h-[100dvh] overflow-hidden" style={{ background: 'var(--bg)' }}>
       <Sidebar
         open={mobileNavOpen}
         onClose={() => setMobileNavOpen(false)}

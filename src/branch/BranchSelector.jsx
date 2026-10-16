@@ -39,7 +39,7 @@ export default function BranchSelector() {
         onChange={(v) => handleScopeChange({ target: { value: v } })}
         ariaLabel="Branch scope"
         width="w-auto"
-        minWidth={140}
+        minWidth={110}
       >
         <option value="ALL">All Branches</option>
         <option value="STORES">All Stores</option>
@@ -54,7 +54,7 @@ export default function BranchSelector() {
           onChange={(v) => setSpecificBranchId(v)}
           ariaLabel="Branch"
           width="w-auto"
-          minWidth={140}
+          minWidth={110}
         >
           {branches.map((b) => (
             <option key={b.id} value={b.id}>

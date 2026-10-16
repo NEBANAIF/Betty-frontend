@@ -200,7 +200,7 @@ function BranchDetail({ branch, stats, busy, actionError, onDeactivateClick, onU
         {stats === null && <p className="text-ink-400">Loading...</p>}
         {stats === 'forbidden' && <p className="text-ink-400">You don't have permission to view this branch's stats.</p>}
         {stats && stats !== 'forbidden' && (
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Row label="Stock Units" value={stats.totalStockUnits} />
             <Row label="Inventory Value" value={formatMoney(stats.inventoryValue)} />
             <Row label="Sales" value={stats.totalSalesCount} />

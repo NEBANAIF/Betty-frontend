@@ -163,7 +163,7 @@ function CreateExpenseModal({ open, onClose, onCreated }) {
   return (
     <Modal open={open} title="Log Expense" onClose={onClose}>
       <form onSubmit={submit} className="space-y-3">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <label className="block"><span className="mb-1 block text-xs font-medium text-ink-500">Category</span>
             <select required className="input" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
               <option value="">Select...</option>
@@ -177,7 +177,7 @@ function CreateExpenseModal({ open, onClose, onCreated }) {
         <label className="block"><span className="mb-1 block text-xs font-medium text-ink-500">Description</span>
           <input required className="input" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
         </label>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <label className="block"><span className="mb-1 block text-xs font-medium text-ink-500">Date</span>
             <input required type="date" className="input" value={form.expenseDate} onChange={(e) => setForm({ ...form, expenseDate: e.target.value })} />
           </label>
