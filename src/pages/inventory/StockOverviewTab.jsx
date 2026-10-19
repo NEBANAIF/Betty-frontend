@@ -62,7 +62,7 @@ function StockOverviewTable({ rows, branches, search, setSearch }) {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-cream-200 text-left text-xs uppercase tracking-wide text-ink-400">
-              <th className="sticky left-0 z-10 bg-cream-50 py-2 pr-4 font-medium">Product</th>
+              <th className="sticky left-0 z-10 py-2 pr-4 font-medium" style={{ background: 'var(--card-bg)' }}>Product</th>
               {branches.map((b) => (
                 <th key={b.branchId} className="whitespace-nowrap py-2 pr-4 text-right font-medium">
                   {b.branchName}
@@ -74,7 +74,7 @@ function StockOverviewTable({ rows, branches, search, setSearch }) {
           <tbody>
             {pageRows.map((row) => (
               <tr key={row.productId} className="border-b border-slate-50 last:border-0">
-                <td className="sticky left-0 z-10 bg-cream-50/95 py-2.5 pr-4 backdrop-blur-sm">
+                <td className="sticky left-0 z-10 py-2.5 pr-4" style={{ background: 'var(--card-bg)' }}>
                   <p className="font-medium text-ink-900">{row.productName}</p>
                   <p className="text-xs text-ink-400">{row.sku}</p>
                 </td>

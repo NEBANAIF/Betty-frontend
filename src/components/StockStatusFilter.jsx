@@ -2,10 +2,10 @@ import React from 'react';
 import { STOCK_STATUS } from '../utils/stockStatus.js';
 
 const OPTIONS = [
-  { key: '', label: 'All', countKey: 'total', color: '#8a8d5d' },
-  { key: 'IN_STOCK', label: 'In stock', countKey: 'inStock', color: STOCK_STATUS.IN_STOCK.color },
-  { key: 'LOW_STOCK', label: 'Low stock', countKey: 'lowStock', color: STOCK_STATUS.LOW_STOCK.color },
-  { key: 'OUT_OF_STOCK', label: 'Out of stock', countKey: 'outOfStock', color: STOCK_STATUS.OUT_OF_STOCK.color },
+  { key: '', label: 'All', short: 'All', countKey: 'total', color: 'var(--sidebar)' },
+  { key: 'IN_STOCK', label: 'In stock', short: 'In', countKey: 'inStock', color: STOCK_STATUS.IN_STOCK.color },
+  { key: 'LOW_STOCK', label: 'Low stock', short: 'Low', countKey: 'lowStock', color: STOCK_STATUS.LOW_STOCK.color },
+  { key: 'OUT_OF_STOCK', label: 'Out of stock', short: 'Out', countKey: 'outOfStock', color: STOCK_STATUS.OUT_OF_STOCK.color },
 ];
 
 /**
@@ -48,7 +48,8 @@ export default function StockStatusFilter({ value, counts, onChange }) {
             role="radio"
             aria-checked={selected}
             onClick={() => onChange(o.key)}
-            className={`relative z-10 flex flex-col items-center justify-center gap-0.5 rounded-md px-2 py-1.5 text-[12px] font-medium leading-tight transition-colors duration-300 sm:min-w-[88px] sm:flex-row sm:gap-1.5 sm:text-[13px] ${
+            aria-label={`${o.label}${count == null ? '' : `, ${count}`}`}
+            className={`relative z-10 flex flex-row items-center justify-center gap-1 whitespace-nowrap rounded-md px-1.5 py-1 text-[12px] font-medium leading-tight transition-colors duration-300 sm:min-w-[88px] sm:gap-1.5 sm:px-2 sm:py-1.5 sm:text-[13px] ${
               selected ? 'text-white' : 'text-ink-500 hover:text-ink-900'
             }`}
           >
@@ -56,11 +57,12 @@ export default function StockStatusFilter({ value, counts, onChange }) {
               {o.key && (
                 <span
                   aria-hidden="true"
-                  className="h-1.5 w-1.5 rounded-full transition-colors duration-300"
+                  className="hidden h-1.5 w-1.5 rounded-full transition-colors duration-300 sm:block"
                   style={{ backgroundColor: selected ? '#fff' : o.color }}
                 />
               )}
-              {o.label}
+              <span className="sm:hidden">{o.short}</span>
+              <span className="hidden sm:inline">{o.label}</span>
             </span>
             <span className={`tabular-nums text-[11px] ${selected ? 'text-white/85' : 'text-ink-400'}`}>
               {count == null ? '–' : count}

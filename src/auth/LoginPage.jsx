@@ -44,7 +44,7 @@ export default function LoginPage() {
         <div>
           <label htmlFor="email" className="label">Email</label>
           <div className="relative">
-            <span className="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center" style={{ color: '#a3a676' }}>
+            <span className="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center" style={{ color: 'var(--kpi-accent, #a3a676)' }}>
               <Icon name="mail" size={16} />
             </span>
             <input id="email" type="email" required autoFocus autoComplete="username" spellCheck="false"
@@ -58,7 +58,7 @@ export default function LoginPage() {
         <div>
           <label htmlFor="password" className="label">Password</label>
           <div className="relative">
-            <span className="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center" style={{ color: '#a3a676' }}>
+            <span className="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center" style={{ color: 'var(--kpi-accent, #a3a676)' }}>
               <Icon name="lock" size={16} />
             </span>
             <input id="password" ref={pwdRef}
@@ -73,7 +73,7 @@ export default function LoginPage() {
               aria-label={showPwd ? 'Hide password' : 'Show password'}
               aria-pressed={showPwd}
               className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-lg transition"
-              style={{ color: showPwd ? '#a3a676' : '#b8b498' }}>
+              style={{ color: showPwd ? 'var(--kpi-accent, #a3a676)' : 'var(--text-muted)' }}>
               <Icon name={showPwd ? 'eye-off' : 'eye'} size={18} />
             </button>
           </div>

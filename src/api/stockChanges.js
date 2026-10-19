@@ -3,10 +3,12 @@ import apiClient from './client.js';
 /**
  * Manual stock changes are HELD: nothing moves until someone with "Approve stock changes" approves.
  *
- * submit: { changeType: 'ADD_BATCH' | 'REMOVE_STOCK', productId, branchId, quantity,
+ * submit: { changeType: 'ADD_BATCH' | 'REMOVE_STOCK' | 'EDIT_BATCH', productId, branchId, quantity,
  *   costPrice (ADD_BATCH), receivedDate? (ADD_BATCH), movementType: 'ADJUSTMENT' | 'DAMAGED' | 'LOST' (REMOVE_STOCK),
  *   batchId? (REMOVE_STOCK - omit for oldest first), note (required for REMOVE_STOCK) }
- * ADD_BATCH needs BATCH_CREATE, REMOVE_STOCK needs STOCK_ADJUST (both server-side).
+ * EDIT_BATCH: { batchId, productId, branchId, quantity (the batch's own), batchNumber, costPrice?, expiryDate? } - the
+ * values the batch should have once approved. Needs BATCH_CREATE or STOCK_ADJUST.
+ * ADD_BATCH needs BATCH_CREATE, REMOVE_STOCK needs STOCK_ADJUST (all server-side).
  */
 export function submitStockChange(change) {
   return apiClient.post('/stock-changes', change).then((res) => res.data);

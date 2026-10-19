@@ -15,6 +15,12 @@ const TONE_BY_STATUS = {
   PARTIALLY_PAID: 'warning',
   PARTIALLY_RECEIVED: 'warning',
   IN_TRANSIT: 'info',
+  ARRIVED: 'success',
+  NOT_SHIPPED: 'neutral',
+  NOT_RECEIVED: 'neutral',
+  DELAYED: 'danger',
+  GLOBAL: 'info',
+  LOCAL: 'neutral',
   DRAFT: 'neutral',
   // Branch type badges (not really a "status", but reuses the same component)
   STORE: 'info',

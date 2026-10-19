@@ -16,7 +16,7 @@ export default function DataTable({ columns, rows, keyField = 'id', onRowClick, 
       <div className="flex flex-col items-center justify-center gap-3 py-14 text-center">
         <span
           className="flex h-12 w-12 items-center justify-center rounded-full ring-1"
-          style={{ background: 'rgba(163,166,118,0.12)', color: '#a3a676', ringColor: 'rgba(163,166,118,0.25)' }}
+          style={{ background: 'var(--kpi-accent-soft, rgba(163,166,118,0.12))', color: 'var(--kpi-accent, #a3a676)' }}
         >
           <Icon name="inbox" size={20} />
         </span>
@@ -70,7 +70,7 @@ export default function DataTable({ columns, rows, keyField = 'id', onRowClick, 
                   <td
                     key={col.key}
                     className={`td ${getAlign(col)} ${col.className || ''}`}
-                    style={{ borderBottom: ri === rows.length - 1 ? 'none' : '1px solid rgba(140,128,70,0.09)' }}
+                    style={{ borderBottom: ri === rows.length - 1 ? 'none' : '1px solid var(--card-border)' }}
                   >
                     {cell(col, row)}
                   </td>
@@ -101,7 +101,7 @@ export default function DataTable({ columns, rows, keyField = 'id', onRowClick, 
                 <div className="min-w-0 text-sm font-semibold" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>
                   {cell(primaryCol, row)}
                 </div>
-                {onRowClick && <Icon name="chevronRight" size={15} style={{ color: '#a3a676' }} className="mt-0.5 shrink-0" />}
+                {onRowClick && <Icon name="chevronRight" size={15} style={{ color: 'var(--kpi-accent, #a3a676)' }} className="mt-0.5 shrink-0" />}
               </div>
               {restCols.length > 0 && (
                 <dl className="divide-y" style={{ '--tw-divide-opacity': 1 }}>
@@ -109,7 +109,7 @@ export default function DataTable({ columns, rows, keyField = 'id', onRowClick, 
                     <div
                       key={col.key}
                       className="flex items-center justify-between gap-3 py-1.5"
-                      style={{ borderTop: '1px solid rgba(140,128,70,0.1)' }}
+                      style={{ borderTop: '1px solid var(--card-border)' }}
                     >
                       <dt className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-ui)' }}>{col.header}</dt>
                       <dd className="min-w-0 text-right text-sm" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>{cell(col, row)}</dd>

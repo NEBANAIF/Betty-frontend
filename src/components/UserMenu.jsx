@@ -36,7 +36,7 @@ export default function UserMenu() {
       >
         <span
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[13px] font-bold text-white ring-1 ring-white/30"
-          style={{ background: '#7a7d55', fontFamily: 'var(--font-ui)' }}
+          style={{ background: 'var(--sidebar)', fontFamily: 'var(--font-ui)' }}
         >
           {initials(user?.name)}
         </span>

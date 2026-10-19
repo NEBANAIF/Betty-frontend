@@ -35,10 +35,14 @@ const FORMATS = [
  *  - productFilter true to add a Product picker; fetchRows then receives productId / product
  *  - infoLines    extra lines printed in the template header (e.g. "Branch: All branches")
  *  - initialSearch / initialFrom / initialTo / initialProduct   prefill from what the page is already showing
+ *  - extraFilters   page-specific filters shown in the dialog, so Export offers exactly the filters of the page:
+ *                   [{ key, label, type: 'select' | 'text', options: [{ value, label }], list: datalistId }].
+ *                   Their chosen values reach fetchRows as `extra` ({ key: value }) and are printed in the header.
+ *  - initialExtra   the page's current values for those filters
  */
 export default function ExportButton({
   title, columns, fetchRows, dateField, dateLabel = 'Date', nameFields, nameLabel = 'Name / keyword',
-  infoLines = [], scoped = false, productFilter = false, initialSearch = '', initialFrom = '', initialTo = '', initialProduct = null, className = '', disabled = false,
+  infoLines = [], scoped = false, productFilter = false, initialSearch = '', initialFrom = '', initialTo = '', initialProduct = null, extraFilters = [], initialExtra = {}, className = '', disabled = false,
 }) {
   const { user } = useAuth();
   const { appName } = useAppName();
@@ -46,6 +50,7 @@ export default function ExportButton({
   // '' = whatever the top-bar branch selector says; otherwise ALL / STORES / WAREHOUSES / a branch id.
   const [branchChoice, setBranchChoice] = useState('');
   const [product, setProduct] = useState(null);
+  const [extra, setExtra] = useState({});
   const canPickBranch = scoped && isSuperAdmin && (branches?.length ?? 0) > 0;
   const effectiveScope = (() => {
     if (!canPickBranch || !branchChoice) return pageScope;
@@ -75,6 +80,7 @@ export default function ExportButton({
     setSearch(initialSearch || '');
     setBranchChoice('');
     setProduct(initialProduct || null);
+    setExtra({ ...initialExtra });
     setError('');
     setNotice('');
     setOpen(true);
@@ -92,7 +98,7 @@ export default function ExportButton({
       const wide = serverRange(dateField ? from : '', dateField ? to : '');
       const fetched = await fetchRows({
         from, to, serverFrom: wide.from, serverTo: wide.to,
-        scopeParams: effectiveScope, productId: product?.id, product,
+        scopeParams: effectiveScope, productId: product?.id, product, extra,
       });
       const filters = { from: dateField ? from : '', to: dateField ? to : '', search: nameFields ? search : '' };
       const rows = filterRows(fetched, filters, { dateField, nameFields });
@@ -103,6 +109,12 @@ export default function ExportButton({
       const info = [
         ...(branchLine ? [branchLine] : []),
         ...(productFilter && product ? [`Product: ${product.name}${product.sku ? ` (${product.sku})` : ''}`] : []),
+        ...extraFilters.flatMap((f) => {
+          const v = extra[f.key];
+          if (v === '' || v == null) return [];
+          const shown = f.options ? (f.options.find((o) => String(o.value) === String(v))?.label ?? v) : v;
+          return [`${f.label}: ${shown}`];
+        }),
         ...infoLines,
         ...describeFilters(filters).filter((l) => (dateField || !l.startsWith('Date')) && (nameFields || !l.startsWith('Name'))),
       ];
@@ -167,6 +179,26 @@ export default function ExportButton({
                 {branches.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
               </select>
             </label>
+          )}
+
+          {extraFilters.length > 0 && (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {extraFilters.map((f) => (
+                <label key={f.key} className="block">
+                  <span className="mb-1 block text-xs font-medium text-ink-500">{f.label}</span>
+                  {f.type === 'select' ? (
+                    <select className="input" value={extra[f.key] ?? ''} onChange={(e) => setExtra({ ...extra, [f.key]: e.target.value })}>
+                      {(f.options || []).map((o) => <option key={String(o.value)} value={o.value}>{o.label}</option>)}
+                    </select>
+                  ) : (
+                    <input
+                      className="input" list={f.list} value={extra[f.key] ?? ''} placeholder={f.placeholder || 'Any'}
+                      onChange={(e) => setExtra({ ...extra, [f.key]: e.target.value })}
+                    />
+                  )}
+                </label>
+              ))}
+            </div>
           )}
 
           {productFilter && (

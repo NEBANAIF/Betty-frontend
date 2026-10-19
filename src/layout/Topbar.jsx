@@ -15,7 +15,7 @@ export default function Topbar({ onOpenMenu }) {
       className="sticky top-0 z-20 flex min-h-14 flex-nowrap items-center justify-between gap-x-2 px-3 py-2 sm:gap-x-3 sm:px-5"
       style={{
         background: 'var(--bg-translucent)',
-        borderBottom: '1px solid rgba(140,128,70,0.18)',
+        borderBottom: '1px solid var(--card-border)',
         backdropFilter: 'blur(8px)',
         WebkitBackdropFilter: 'blur(8px)',
         fontFamily: 'var(--font-ui)',
@@ -27,13 +27,13 @@ export default function Topbar({ onOpenMenu }) {
         </button>
         {current && (
           <div className="hidden min-w-0 items-center gap-2 sm:flex">
-            <span style={{ color: '#a3a676' }}>
+            <span style={{ color: 'var(--kpi-accent, #a3a676)' }}>
               <Icon name={current.icon || 'dashboard'} size={16} />
             </span>
             <span className="truncate text-sm font-medium" style={{ color: 'var(--text)' }}>
               {current.label}
             </span>
-            <span className="mx-1 h-4 w-px" style={{ background: 'rgba(140,128,70,0.22)' }} aria-hidden="true" />
+            <span className="mx-1 h-4 w-px" style={{ background: 'var(--card-border)' }} aria-hidden="true" />
           </div>
         )}
         <BranchSelector />

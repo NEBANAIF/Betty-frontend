@@ -32,7 +32,7 @@ export default function SearchInput({
         aria-hidden="true"
         className="absolute left-0 top-1/2 h-5 w-[2px] -translate-y-1/2 rounded-r-full transition-all duration-200"
         style={{
-          background: focused ? '#7a7d55' : 'transparent',
+          background: focused ? 'var(--sidebar)' : 'transparent',
           opacity: focused ? 1 : 0,
         }}
       />
@@ -41,7 +41,7 @@ export default function SearchInput({
       <span
         className="pointer-events-none absolute left-3 flex items-center transition-all duration-200"
         style={{
-          color: focused ? '#7a7d55' : '#b0a880',
+          color: focused ? 'var(--sidebar)' : 'var(--text-muted)',
           transform: focused && hasValue ? 'scale(0.85)' : 'scale(1)',
         }}
       >
@@ -63,12 +63,12 @@ export default function SearchInput({
           fontSize: 15,
           letterSpacing: '0.01em',
           background: focused ? 'var(--input-bg-focus)' : 'var(--input-bg)',
-          borderColor: focused ? '#7a7d55' : 'rgba(140,128,70,0.22)',
+          borderColor: focused ? 'var(--sidebar)' : 'var(--card-border)',
           color: 'var(--text)',
           boxShadow: focused
             ? '0 0 0 3px rgba(122,125,85,0.12), 0 1px 3px rgba(60,55,30,0.06)'
             : '0 1px 2px rgba(60,55,30,0.04)',
-          caretColor: '#7a7d55',
+          caretColor: 'var(--sidebar)',
         }}
       />
 
@@ -83,7 +83,7 @@ export default function SearchInput({
             inputRef.current?.focus();
           }}
           className="absolute right-2.5 flex h-5 w-5 items-center justify-center rounded-full transition-all duration-150 hover:bg-cream-200"
-          style={{ color: '#a3a676' }}
+          style={{ color: 'var(--kpi-accent, #a3a676)' }}
           aria-label="Clear search"
           tabIndex={-1}
         >

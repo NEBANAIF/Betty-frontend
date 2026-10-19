@@ -79,7 +79,15 @@ export default function BatchesPage() {
   const { scopeParams } = useBranchScope();
   const { hasPermission } = useAuth();
   // The cost of each batch is only shown to roles with the cost-price switch on.
-  const columns = hasPermission('VIEW_COSTS') ? COLUMNS : COLUMNS.filter((c) => c.key !== 'costPrice');
+  const canEdit = hasPermission('BATCH_CREATE') || hasPermission('STOCK_ADJUST');
+  const [editing, setEditing] = useState(null); // the batch row being edited, or null
+  const baseColumns = hasPermission('VIEW_COSTS') ? COLUMNS : COLUMNS.filter((c) => c.key !== 'costPrice');
+  const columns = canEdit
+    ? [...baseColumns, {
+      key: 'actions', header: '', className: 'text-right',
+      render: (r) => <button onClick={() => setEditing(r)} className="btn btn-secondary btn-sm">Edit</button>,
+    }]
+    : baseColumns;
   const [filterProduct, setFilterProduct] = useState(null);
   const productId = filterProduct ? filterProduct.id : '';
   const [from, setFrom] = useState('');
@@ -156,6 +164,17 @@ export default function BatchesPage() {
         )}
       </div>
 
+      <EditBatchModal
+        batch={editing}
+        canEditCost={hasPermission('VIEW_COSTS')}
+        onClose={() => setEditing(null)}
+        onSubmitted={() => {
+          setNotice('Batch edit entered and waiting for approval — the batch will change once it is approved.');
+          setEditing(null);
+          setPendingKey((k) => k + 1);
+        }}
+      />
+
       <StockChangeModal
         open={modal !== null}
         mode={modal ?? 'ADD_BATCH'}
@@ -222,6 +241,37 @@ function PendingStockChanges({ reloadKey, onApplied }) {
       <ul className="divide-y divide-cream-200">
         {items.map((c) => {
           const adding = c.changeType === 'ADD_BATCH';
+          if (c.changeType === 'EDIT_BATCH') {
+            return (
+              <li key={c.id} className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0 text-sm">
+                  <p className="font-medium text-ink-900">
+                    <span className="text-sky-700">Edit</span> batch {c.batchNumber}
+                    {' '}· {c.productName}
+                    <span className="font-normal text-ink-400"> · {c.branchName}</span>
+                  </p>
+                  <p className="text-ink-600">
+                    {c.newBatchNumber && c.newBatchNumber !== c.batchNumber ? <>new number {c.newBatchNumber} · </> : null}
+                    {c.costPrice != null && <>cost {formatMoney(c.costPrice)} each · </>}
+                    {c.expiryDate ? <>expiry {formatDate(c.expiryDate)}</> : <>no expiry date</>}
+                  </p>
+                  <p className="text-xs text-ink-400">Entered by {c.requestedByName} · {formatDateTime(c.requestedAt)}</p>
+                </div>
+                <div className="flex shrink-0 gap-2">
+                  {canApprove && (
+                    <button disabled={busyId === c.id} onClick={() => run(c, () => approveStockChange(c.id))} className="btn btn-primary btn-sm">
+                      Approve
+                    </button>
+                  )}
+                  {(canApprove || c.mine) && (
+                    <button disabled={busyId === c.id} onClick={() => run(c, () => rejectStockChange(c.id))} className="btn btn-secondary btn-sm">
+                      {canApprove ? 'Reject' : 'Discard'}
+                    </button>
+                  )}
+                </div>
+              </li>
+            );
+          }
           return (
             <li key={c.id} className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0 text-sm">
@@ -418,6 +468,96 @@ function StockChangeModal({ open, mode, onClose, onSubmitted }) {
           </button>
         </div>
       </form>
+    </Modal>
+  );
+}
+
+/**
+ * Edit a batch's number, cost price and expiry date. Like Add Batch, this does NOT change the
+ * batch - it creates a held change that someone with "Approve stock changes" must approve.
+ * Quantities are not editable here (use Add Batch / Remove Stock, which keep Stock History right).
+ */
+function EditBatchModal({ batch, canEditCost, onClose, onSubmitted }) {
+  const [form, setForm] = useState({ batchNumber: '', costPrice: '', expiryDate: '' });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!batch) return;
+    setForm({
+      batchNumber: batch.batchNumber ?? '',
+      costPrice: batch.costPrice ?? '',
+      expiryDate: batch.expiryDate ?? '',
+    });
+    setError('');
+  }, [batch]);
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setError('');
+    if (!form.batchNumber.trim()) {
+      setError('The batch number cannot be empty.');
+      return;
+    }
+    setSaving(true);
+    try {
+      await submitStockChange({
+        changeType: 'EDIT_BATCH',
+        batchId: batch.id,
+        productId: batch.productId,
+        branchId: batch.branchId,
+        quantity: batch.quantity,
+        batchNumber: form.batchNumber.trim(),
+        costPrice: canEditCost && form.costPrice !== '' ? Number(form.costPrice) : undefined,
+        expiryDate: form.expiryDate || undefined,
+      });
+      onSubmitted();
+    } catch (err) {
+      setError(extractErrorMessage(err));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Modal open={batch !== null} title="Edit Batch" onClose={onClose}>
+      {batch && (
+        <form onSubmit={submit} className="space-y-3">
+          <p className="text-sm text-ink-600">
+            <span className="font-medium text-ink-900">{batch.productName}</span>
+            <span className="text-ink-400"> · {batch.branchName} · {batch.quantity} received, {batch.remainingQuantity} left</span>
+          </p>
+
+          <label className="block"><span className="mb-1 block text-xs font-medium text-ink-500">Batch number</span>
+            <input required maxLength={100} className="input" value={form.batchNumber} onChange={(e) => setForm({ ...form, batchNumber: e.target.value })} />
+          </label>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {canEditCost && (
+              <label className="block"><span className="mb-1 block text-xs font-medium text-ink-500">Cost price (per unit)</span>
+                <input type="number" min="0" step="0.01" className="input" value={form.costPrice} onChange={(e) => setForm({ ...form, costPrice: e.target.value })} />
+              </label>
+            )}
+            <label className="block"><span className="mb-1 block text-xs font-medium text-ink-500">Expiry date (optional)</span>
+              <input type="date" className="input" value={form.expiryDate} onChange={(e) => setForm({ ...form, expiryDate: e.target.value })} />
+            </label>
+          </div>
+
+          <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-900">
+            This is held for approval. The batch does <strong>not</strong> change until it is approved. The cost is changed on
+            the batch itself, so it also applies to the stock still left in it.
+          </p>
+
+          {error && <p className="text-sm text-red-600">{error}</p>}
+
+          <div className="flex justify-end gap-2 pt-2">
+            <button type="button" onClick={onClose} className="btn btn-secondary btn-sm">Cancel</button>
+            <button type="submit" disabled={saving} className="btn btn-primary btn-sm">
+              {saving ? 'Sending...' : 'Send for approval'}
+            </button>
+          </div>
+        </form>
+      )}
     </Modal>
   );
 }

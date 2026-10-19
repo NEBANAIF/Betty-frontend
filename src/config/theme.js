@@ -248,7 +248,7 @@ export function themeToCssVars(themeIn) {
   }
   if (theme.textColor) v['--text'] = theme.textColor;
   if (theme.mutedTextColor) v['--text-muted'] = theme.mutedTextColor;
-  if (theme.buttonColor) { v['--sidebar'] = theme.buttonColor; v['--ring'] = rgba(theme.buttonColor, 0.35); }
+  if (theme.buttonColor) { v['--sidebar'] = theme.buttonColor; v['--ring'] = rgba(theme.buttonColor, 0.35); v['--card-border'] = rgba(theme.buttonColor, 0.2); }
 
   if (theme.sidebarBg) {
     const c = theme.sidebarBg;
@@ -287,7 +287,7 @@ export function themeToCssVars(themeIn) {
 
 /** Every variable this file can set - so switching back to default can remove them all. */
 export const ALL_VARS = [
-  '--bg', '--card-bg', '--text', '--text-muted', '--sidebar', '--ring', '--sidebar-bg', '--sidebar-text',
+  '--bg', '--card-bg', '--card-border', '--text', '--text-muted', '--sidebar', '--ring', '--sidebar-bg', '--sidebar-text',
   '--sidebar-text-muted', '--sidebar-accent', '--sidebar-accent-soft', '--sidebar-border', '--sidebar-active-bg',
   '--sidebar-hover', '--th-bg', '--th-text', '--row-a', '--row-b', '--row-hover', '--font-ui', '--font-body',
   '--font-heading', '--font-table', '--font-scale', '--bg-translucent', '--input-bg', '--input-bg-focus',

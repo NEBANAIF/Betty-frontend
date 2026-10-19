@@ -31,7 +31,7 @@ export default function ElegantSelect({
         aria-hidden="true"
         className="pointer-events-none absolute left-0 top-1/2 h-5 w-[2px] -translate-y-1/2 rounded-r-full transition-all duration-200"
         style={{
-          background: focused ? '#7a7d55' : 'transparent',
+          background: focused ? 'var(--sidebar)' : 'transparent',
           opacity: focused ? 1 : 0,
         }}
       />
@@ -49,7 +49,7 @@ export default function ElegantSelect({
           fontSize: 15,
           letterSpacing: '0.01em',
           background: focused ? 'var(--input-bg-focus)' : 'var(--input-bg)',
-          borderColor: focused ? '#7a7d55' : 'rgba(140,128,70,0.22)',
+          borderColor: focused ? 'var(--sidebar)' : 'var(--card-border)',
           color: 'var(--text)',
           boxShadow: focused
             ? '0 0 0 3px rgba(122,125,85,0.12), 0 1px 3px rgba(60,55,30,0.06)'
@@ -64,7 +64,7 @@ export default function ElegantSelect({
       <span
         className="pointer-events-none absolute right-3 flex items-center transition-all duration-200"
         style={{
-          color: focused ? '#7a7d55' : '#b0a880',
+          color: focused ? 'var(--sidebar)' : 'var(--text-muted)',
           transform: focused ? 'rotate(180deg)' : 'rotate(0deg)',
         }}
         aria-hidden="true"

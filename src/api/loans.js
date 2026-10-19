@@ -1,8 +1,8 @@
 import apiClient from './client.js';
 
-export function searchLoans({ scope = 'ALL', branchId, customerId, status, dueFrom, dueTo, search, page = 0, size = 20 } = {}) {
+export function searchLoans({ scope = 'ALL', branchId, customerId, status, outstandingOnly, dueFrom, dueTo, search, page = 0, size = 20 } = {}) {
   return apiClient
-    .get('/loans', { params: { scope, branchId, customerId, status, dueFrom, dueTo, search, page, size } })
+    .get('/loans', { params: { scope, branchId, customerId, status, outstandingOnly, dueFrom, dueTo, search, page, size } })
     .then((res) => res.data);
 }
 

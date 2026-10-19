@@ -20,7 +20,7 @@ const EMPTY_FILTERS = { from: '', to: '', method: '', bankId: '', referenceType:
 /** One label/value row inside the payment detail modal. */
 function DetailRow({ label, value }) {
   return (
-    <div className="flex items-start justify-between gap-4 py-2" style={{ borderBottom: '1px solid rgba(140,128,70,0.09)' }}>
+    <div className="flex items-start justify-between gap-4 py-2" style={{ borderBottom: '1px solid var(--card-border)' }}>
       <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-ui)' }}>
         {label}
       </span>

@@ -100,7 +100,7 @@ export function PreviewForm({ config }) {
         <div key={label}>
           <span className="label">{label}</span>
           <div className="relative">
-            <span className="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center" style={{ color: '#a3a676' }}>
+            <span className="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center" style={{ color: 'var(--kpi-accent, #a3a676)' }}>
               <Icon name={icon} size={16} />
             </span>
             <input className="input pl-10" disabled placeholder={placeholder} tabIndex={-1} />

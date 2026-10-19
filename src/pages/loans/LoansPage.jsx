@@ -17,7 +17,12 @@ import { fetchAllPages } from '../../utils/exporter.js';
 import FilterBar, { FilterField } from '../../components/FilterBar.jsx';
 import SearchInput from '../../components/SearchInput.jsx';
 
-const STATUS_FILTERS = ['', 'OPEN', 'PARTIALLY_PAID', 'PAID', 'OVERDUE'];
+// OUTSTANDING (the default) hides loans that are fully paid - they are not deleted: pick "Paid" or "All loans" to see
+// them, and every repayment stays listed under Payments.
+const OUTSTANDING = 'OUTSTANDING';
+const STATUS_FILTERS = [OUTSTANDING, '', 'OPEN', 'PARTIALLY_PAID', 'PAID', 'OVERDUE'];
+const statusLabel = (s) => (s === OUTSTANDING ? 'Still owing (default)' : s === '' ? 'All loans (incl. paid)' : s.replace(/_/g, ' '));
+const statusParams = (s) => (s === OUTSTANDING ? { outstandingOnly: true } : { status: s || undefined });
 const PAYMENT_METHODS = ['CASH', 'BANK'];
 
 const COLUMNS = [
@@ -51,7 +56,7 @@ export default function LoansPage() {
   const { hasPermission } = useAuth();
   const { scopeParams } = useBranchScope();
   const [page, setPage] = useState(0);
-  const [statusFilter, setStatusFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState(OUTSTANDING);
   const [dueFrom, setDueFrom] = useState('');
   const [dueTo, setDueTo] = useState('');
   const [search, setSearch] = useState('');
@@ -64,14 +69,14 @@ export default function LoansPage() {
 
   const load = () => {
     setStatus('loading');
-    searchLoans({ ...scopeParams, status: statusFilter || undefined, dueFrom: dueFrom || undefined, dueTo: dueTo || undefined, search: search || undefined, page })
+    searchLoans({ ...scopeParams, ...statusParams(statusFilter), dueFrom: dueFrom || undefined, dueTo: dueTo || undefined, search: search || undefined, page })
       .then((res) => { setData(res); setStatus('ready'); })
       .catch((err) => { setError(extractErrorMessage(err)); setStatus('error'); });
   };
 
   const rangeInvalid = Boolean(dueFrom && dueTo && dueFrom > dueTo);
-  const filtersActive = Boolean(dueFrom || dueTo || statusFilter || search);
-  const clearFilters = () => { setPage(0); setDueFrom(''); setDueTo(''); setStatusFilter(''); setSearch(''); };
+  const filtersActive = Boolean(dueFrom || dueTo || statusFilter !== OUTSTANDING || search);
+  const clearFilters = () => { setPage(0); setDueFrom(''); setDueTo(''); setStatusFilter(OUTSTANDING); setSearch(''); };
 
   useEffect(() => {
     if (rangeInvalid) return undefined;
@@ -99,7 +104,7 @@ export default function LoansPage() {
             nameFields={['customerName', 'saleNumber', 'branchName']} nameLabel="Customer or sale number"
             initialFrom={dueFrom} initialTo={dueTo}
             fetchRows={({ serverFrom, serverTo, scopeParams: sp }) => fetchAllPages(searchLoans, {
-              ...sp, status: statusFilter || undefined, search: search || undefined, dueFrom: serverFrom, dueTo: serverTo,
+              ...sp, ...statusParams(statusFilter), search: search || undefined, dueFrom: serverFrom, dueTo: serverTo,
             })}
           />
         </div>
@@ -114,7 +119,7 @@ export default function LoansPage() {
           </FilterField>
           <FilterField label="Status">
             <ElegantSelect value={statusFilter} onChange={(v) => { setPage(0); setStatusFilter(v); }} ariaLabel="Filter by loan status" minWidth={170}>
-              {STATUS_FILTERS.map((s) => <option key={s} value={s}>{s ? s.replace(/_/g, ' ') : 'All statuses'}</option>)}
+              {STATUS_FILTERS.map((s) => <option key={s || 'all'} value={s}>{statusLabel(s)}</option>)}
             </ElegantSelect>
           </FilterField>
         </FilterBar>
