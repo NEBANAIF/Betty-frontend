@@ -10,6 +10,7 @@ import BatchesPage from './pages/batches/BatchesPage.jsx';
 import SalesHistoryPage from './pages/sales-history/SalesHistoryPage.jsx';
 import CustomersPage from './pages/customers/CustomersPage.jsx';
 import LoansPage from './pages/loans/LoansPage.jsx';
+import DebtsPage from './pages/debts/DebtsPage.jsx';
 import ReturnsPage from './pages/returns/ReturnsPage.jsx';
 import TransfersPage from './pages/transfers/TransfersPage.jsx';
 import StockHistoryPage from './pages/stock-history/StockHistoryPage.jsx';
@@ -73,6 +74,7 @@ export default function App() {
         <Route path="/batches" element={<ProtectedRoute requiredPermission={ROUTE_PERMISSIONS['/batches']}><BatchesPage /></ProtectedRoute>} />
         <Route path="/sales-history" element={<ProtectedRoute requiredPermission={ROUTE_PERMISSIONS['/sales-history']}><SalesHistoryPage /></ProtectedRoute>} />
         <Route path="/customers" element={<ProtectedRoute requiredPermission={ROUTE_PERMISSIONS['/customers']}><CustomersPage /></ProtectedRoute>} />
+        <Route path="/debts" element={<ProtectedRoute requiredPermission={ROUTE_PERMISSIONS['/debts']}><DebtsPage /></ProtectedRoute>} />
         <Route path="/loans" element={<ProtectedRoute requiredPermission={ROUTE_PERMISSIONS['/loans']}><LoansPage /></ProtectedRoute>} />
         <Route path="/returns" element={<ProtectedRoute requiredPermission={ROUTE_PERMISSIONS['/returns']}><ReturnsPage /></ProtectedRoute>} />
         <Route path="/transfers" element={<ProtectedRoute requiredPermission={ROUTE_PERMISSIONS['/transfers']}><TransfersPage /></ProtectedRoute>} />

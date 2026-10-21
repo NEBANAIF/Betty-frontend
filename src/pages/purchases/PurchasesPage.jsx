@@ -38,6 +38,7 @@ const BASE_COLUMNS = [
   { key: 'orderDate', header: 'Date', render: (r) => formatDate(r.orderDate) },
   { key: 'total', header: 'Total', render: (r) => (r.purchaseType === 'GLOBAL' && r.currency ? `${formatMoney(r.total)} ${r.currency}` : formatMoney(r.total)), className: 'text-right' },
   { key: 'status', header: 'Status', render: (r) => <Badge status={r.status} /> },
+  { key: 'paymentType', header: 'Payment', render: (r) => <Badge status={r.paymentType || 'PAID'} /> },
 ];
 
 const TYPE_COLUMN = { key: 'purchaseType', header: 'Type', render: (r) => <Badge status={r.purchaseType} /> };
@@ -294,6 +295,8 @@ export default function PurchasesPage() {
               <Info label="Created By" value={selected.createdByName} />
               <Info label="Approved By" value={selected.approvedByName || '—'} />
               <Info label="Type" value={<Badge status={selected.purchaseType} />} />
+              <Info label="Payment" value={<Badge status={selected.paymentType || 'PAID'} />} />
+              {selected.paymentType === 'PARTIAL' && <Info label="Paid at order time" value={formatMoney(selected.amountPaid)} />}
               {selected.purchaseType === 'GLOBAL' && <Info label="Purchase currency" value={selected.currency} />}
             </div>
 
@@ -540,6 +543,7 @@ function CreatePurchaseOrderModal({ open, onClose, onCreated }) {
   }, [open]);
 
   const isGlobal = form.purchaseType === 'GLOBAL';
+  const orderTotal = form.items.reduce((sum, i) => sum + (Number(i.quantity) || 0) * (Number(i.unitCost) || 0), 0);
   const warehouses = branches.filter((b) => b.type === 'WAREHOUSE');
   const warehouseName = (id) => branches.find((b) => b.id === id)?.name || '';
 
@@ -575,6 +579,9 @@ function CreatePurchaseOrderModal({ open, onClose, onCreated }) {
       orderDate: form.orderDate,
       items: form.items.map((i) => ({ productId: i.product.id, quantity: Number(i.quantity), unitCost: Number(i.unitCost) })),
       purchaseType: form.purchaseType,
+      paymentType: form.paymentType,
+      creditDueDate: form.paymentType !== 'PAID' && form.creditDueDate ? form.creditDueDate : undefined,
+      amountPaid: form.paymentType === 'PARTIAL' ? Number(form.amountPaid) : undefined,
     };
     if (isGlobal) {
       if (form.stages.length < 2) {
@@ -645,6 +652,39 @@ function CreatePurchaseOrderModal({ open, onClose, onCreated }) {
           <label className="block"><span className={label}>Order Date</span>
             <input required type="date" className="input" value={form.orderDate} onChange={(e) => setForm({ ...form, orderDate: e.target.value })} />
           </label>
+        </div>
+
+        <div className="space-y-2">
+          <span className={label}>Payment</span>
+          <div className="inline-flex rounded-lg border border-cream-300 p-0.5" role="radiogroup" aria-label="Payment">
+            {[{ value: 'PAID', label: 'Fully paid' }, { value: 'PARTIAL', label: 'Partial' }, { value: 'CREDIT', label: 'Credit' }].map((o) => (
+              <button
+                key={o.value} type="button" role="radio" aria-checked={form.paymentType === o.value}
+                onClick={() => setForm({ ...form, paymentType: o.value })}
+                className={`rounded-md px-4 py-1.5 text-sm font-medium transition ${form.paymentType === o.value ? 'bg-brand-600 text-white' : 'text-ink-600 hover:bg-cream-100'}`}
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
+          {form.paymentType !== 'PAID' && (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {form.paymentType === 'PARTIAL' && (
+                <label className="block"><span className={label}>Amount paid now{isGlobal && form.currency ? ` (${form.currency.trim()})` : ''}</span>
+                  <input required type="number" min="0.01" step="0.01" className="input" value={form.amountPaid} onChange={(e) => setForm({ ...form, amountPaid: e.target.value })} />
+                </label>
+              )}
+              <label className="block"><span className={label}>Pay the rest by (optional)</span>
+                <input type="date" className="input" min={form.orderDate} value={form.creditDueDate} onChange={(e) => setForm({ ...form, creditDueDate: e.target.value })} />
+              </label>
+              <p className="field-hint sm:col-span-2">
+                {form.paymentType === 'PARTIAL' && orderTotal > 0 && Number(form.amountPaid) > 0
+                  ? <>Order total {formatMoney(orderTotal)}, paid now {formatMoney(Number(form.amountPaid))}, balance owed <strong>{formatMoney(Math.max(orderTotal - Number(form.amountPaid), 0))}</strong>. </>
+                  : null}
+                {form.paymentType === 'PARTIAL' ? 'The balance' : 'What you owe this supplier'} is recorded on <strong>My Credits &amp; Loans</strong>, where you record each repayment.
+              </p>
+            </div>
+          )}
         </div>
 
         {isGlobal && (
@@ -722,7 +762,7 @@ function CreatePurchaseOrderModal({ open, onClose, onCreated }) {
 
 function blank() {
   return {
-    purchaseType: 'LOCAL', supplierId: '', branchId: '', orderDate: todayIso(),
+    purchaseType: 'LOCAL', paymentType: 'PAID', creditDueDate: '', amountPaid: '', supplierId: '', branchId: '', orderDate: todayIso(),
     items: [{ product: null, quantity: 1, unitCost: '' }],
     originCountry: '', destinationCountry: '', shippingMethod: 'SEA', currency: 'USD', exchangeRate: '1',
     shippingCost: '', expectedArrivalDate: '', stages: defaultRoute(),

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import Icon from '../../components/Icon';
 import { searchBatches } from '../../api/batches.js';
 import { listBranches } from '../../api/branches.js';
 import {
@@ -85,7 +86,11 @@ export default function BatchesPage() {
   const columns = canEdit
     ? [...baseColumns, {
       key: 'actions', header: '', className: 'text-right',
-      render: (r) => <button onClick={() => setEditing(r)} className="btn btn-secondary btn-sm">Edit</button>,
+      render: (r) => (
+        <button onClick={() => setEditing(r)} className="btn-icon" title="Edit batch" aria-label="Edit batch">
+          <Icon name="edit" size={15} />
+        </button>
+      ),
     }]
     : baseColumns;
   const [filterProduct, setFilterProduct] = useState(null);

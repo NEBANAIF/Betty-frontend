@@ -47,6 +47,7 @@ export const NAV_SECTIONS = [
       { label: 'Finance', to: '/finance', icon: 'finance', permissions: ['FINANCE_VIEW'] },
       { label: 'Expenses', to: '/expenses', icon: 'expenses', permissions: ['EXPENSE_CREATE', 'EXPENSE_VIEW'] },
       { label: 'Payments', to: '/payments', icon: 'payments', permissions: ['PAYMENT_VIEW'] },
+      { label: 'My Credits & Loans', to: '/debts', icon: 'loans', permissions: ['DEBT_VIEW'] },
     ],
   },
   {

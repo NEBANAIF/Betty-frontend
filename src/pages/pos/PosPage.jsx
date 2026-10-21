@@ -12,6 +12,7 @@ import { formatMoney } from '../../utils/format.js';
 import ConfirmDialog from '../../components/ConfirmDialog.jsx';
 
 const PAYMENT_METHODS = ['CASH', 'BANK', 'CREDIT'];
+const SALE_EXPENSE_CATEGORIES = ['LABOR', 'TRANSPORT', 'MAINTENANCE', 'OTHER'];
 
 // Keep only digits and one decimal point (max 2 decimals). Amount boxes are plain text fields so a
 // cashier can type freely - no spinner arrows, and nothing snaps back while typing.
@@ -38,6 +39,10 @@ export default function PosPage() {
   //  - the same product can be on several lines (for example one per batch).
   const [cart, setCart] = useState([]);
   const nextLineId = useRef(1);
+
+  // Costs of THIS sale (labour, delivery...) entered at checkout: [{ id, category, amountText, description }]
+  const [saleExpenses, setSaleExpenses] = useState([]);
+  const nextExpenseId = useRef(1);
   const [batchesByProduct, setBatchesByProduct] = useState({}); // productId -> [batches] | 'loading' | 'error'
   // What this cashier's role may do or see (set on the Roles & Permissions page).
   const canSeeCost = hasPermission('VIEW_COSTS');
@@ -76,6 +81,7 @@ export default function PosPage() {
   const total = Math.max(subtotal - discount, 0);
   const paid = amountPaid === '' ? total : Number(amountPaid) || 0;
   const remaining = Math.max(total - paid, 0);
+  const saleExpensesTotal = saleExpenses.reduce((sum, e) => sum + (Number(e.amountText) || 0), 0);
 
   async function handleProductSearch(query) {
     setProductQuery(query);
@@ -151,6 +157,16 @@ export default function PosPage() {
     updateLine(lineId, { quantity: Math.max(1, parseInt(digits, 10) || 1), quantityText: digits });
   }
 
+  function addSaleExpense() {
+    setSaleExpenses((prev) => [...prev, { id: nextExpenseId.current++, category: 'LABOR', amountText: '', description: '' }]);
+  }
+  function updateSaleExpense(id, patch) {
+    setSaleExpenses((prev) => prev.map((e) => (e.id === id ? { ...e, ...patch } : e)));
+  }
+  function removeSaleExpense(id) {
+    setSaleExpenses((prev) => prev.filter((e) => e.id !== id));
+  }
+
   function removeLine(lineId) {
     setCart((prev) => prev.filter((line) => line.lineId !== lineId));
   }
@@ -209,6 +225,12 @@ export default function PosPage() {
       setError('A customer is required for a credit or partially paid sale.');
       return;
     }
+    for (const e of saleExpenses) {
+      if (!(Number(e.amountText) > 0) || !e.description.trim()) {
+        setError('Each sale expense needs an amount and a description - fill it in or remove it.');
+        return;
+      }
+    }
     setConfirmOpen(true);
   }
 
@@ -230,6 +252,12 @@ export default function PosPage() {
         amountPaid: paid,
         bankId: paymentMethod === 'BANK' ? bankId : null,
         accountReference: paymentMethod !== 'CASH' ? accountReference : null,
+        expenses: saleExpenses.map((e) => ({
+          category: e.category,
+          amount: Number(e.amountText),
+          description: e.description.trim(),
+          paymentMethod: 'CASH',
+        })),
       });
       setReceipt(sale);
       resetForNextSale();
@@ -250,6 +278,7 @@ export default function PosPage() {
     setAmountPaid('');
     setBankId('');
     setAccountReference('');
+    setSaleExpenses([]);
   }
 
   if (!user?.branchId) {
@@ -518,6 +547,46 @@ export default function PosPage() {
             <p className="mt-1 text-xs text-ink-400">Leave blank to pay the full total.</p>
           </div>
 
+          {hasPermission('EXPENSE_CREATE') && (
+            <div className="rounded-lg border border-cream-300 p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-ink-700">Expenses for this sale</span>
+                <button type="button" onClick={addSaleExpense} className="text-xs font-medium text-sage-600 hover:underline">
+                  + Add expense
+                </button>
+              </div>
+              {saleExpenses.length === 0 ? (
+                <p className="mt-1 text-xs text-ink-400">Labour, delivery or other cost of this sale. Not charged to the customer.</p>
+              ) : (
+                <div className="mt-2 space-y-2">
+                  {saleExpenses.map((ex) => (
+                    <div key={ex.id} className="space-y-1.5 rounded-lg bg-cream-100 p-2">
+                      <div className="flex gap-2">
+                        <select value={ex.category} onChange={(e) => updateSaleExpense(ex.id, { category: e.target.value })} className="input flex-1">
+                          {SALE_EXPENSE_CATEGORIES.map((c) => <option key={c} value={c}>{c.charAt(0) + c.slice(1).toLowerCase()}</option>)}
+                        </select>
+                        <input
+                          type="text" inputMode="decimal" placeholder="Amount" value={ex.amountText}
+                          onFocus={(e) => e.target.select()}
+                          onChange={(e) => updateSaleExpense(ex.id, { amountText: cleanDecimal(e.target.value) })}
+                          className="input w-28"
+                        />
+                        <button type="button" onClick={() => removeSaleExpense(ex.id)} className="btn-icon" title="Remove expense" aria-label="Remove expense">
+                          <Icon name="close" size={14} />
+                        </button>
+                      </div>
+                      <input
+                        value={ex.description} maxLength={400} placeholder="Description (e.g. loading labour)"
+                        onChange={(e) => updateSaleExpense(ex.id, { description: e.target.value })}
+                        className="input"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           <dl className="space-y-1 border-t border-cream-200 pt-3 text-sm">
             <div className="flex justify-between">
               <dt className="text-ink-500">Subtotal</dt>
@@ -533,6 +602,12 @@ export default function PosPage() {
               <dt>Total</dt>
               <dd>{formatMoney(total)}</dd>
             </div>
+            {saleExpensesTotal > 0 && (
+              <div className="flex justify-between text-ink-500">
+                <dt>Sale expenses (not charged)</dt>
+                <dd>{formatMoney(saleExpensesTotal)}</dd>
+              </div>
+            )}
             {remaining > 0 && (
               <div className="flex justify-between text-amber-600">
                 <dt>Remaining (credit)</dt>

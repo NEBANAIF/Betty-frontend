@@ -14,7 +14,7 @@ import { fetchAllPages } from '../../utils/exporter.js';
 import FilterBar, { FilterField } from '../../components/FilterBar.jsx';
 import ElegantSelect from '../../components/ElegantSelect.jsx';
 
-const CATEGORIES = ['RENT', 'ELECTRICITY', 'SALARIES', 'TRANSPORT', 'INTERNET', 'MAINTENANCE', 'OTHER'];
+const CATEGORIES = ['RENT', 'ELECTRICITY', 'SALARIES', 'LABOR', 'TRANSPORT', 'INTERNET', 'MAINTENANCE', 'OTHER'];
 const PAYMENT_METHODS = ['CASH', 'BANK', 'CREDIT'];
 
 const COLUMNS = [
@@ -22,6 +22,7 @@ const COLUMNS = [
   { key: 'category', header: 'Category' },
   { key: 'description', header: 'Description' },
   { key: 'branchName', header: 'Branch' },
+  { key: 'saleNumber', header: 'Sale', render: (r) => r.saleNumber || '—' },
   { key: 'amount', header: 'Amount', render: (r) => formatMoney(r.amount), className: 'text-right' },
   { key: 'createdByName', header: 'Logged By' },
 ];
@@ -31,6 +32,7 @@ const EXPORT_COLUMNS = [
   { header: 'Category', value: (r) => r.category },
   { header: 'Description', value: (r) => r.description },
   { header: 'Branch', value: (r) => r.branchName },
+  { header: 'Sale', value: (r) => r.saleNumber },
   { header: 'Payment method', value: (r) => r.paymentMethod },
   { header: 'Reference', value: (r) => r.reference },
   { header: 'Logged by', value: (r) => r.createdByName },
