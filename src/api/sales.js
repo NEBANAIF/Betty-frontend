@@ -35,3 +35,24 @@ export function getSale(id) {
 export function voidSale(id, reason) {
   return apiClient.post(`/sales/${id}/void`, { reason }).then((res) => res.data);
 }
+
+/** GET /api/sales/import/template - the .xlsx a person fills in and re-uploads via importSales(). Returns a Blob. */
+export function downloadSalesImportTemplate() {
+  return apiClient.get('/sales/import/template', { responseType: 'blob' }).then((res) => res.data);
+}
+
+/**
+ * POST /api/sales/import - records sales that already happened (POS_ACCESS required).
+ * Returns { totalLines, totalSales, imported, failed, skippedEmptyRows, results: [{ rowNumber, invoiceNo, lines,
+ * success, message }] } - always 200 even when every sale was refused; read the summary, not the status.
+ * `branchId` is used for rows whose Branch cell is blank; `bankId` for rows paid by Bank.
+ */
+export function importSales(file, { branchId, bankId } = {}) {
+  const formData = new FormData();
+  formData.append('file', file);
+  if (branchId) formData.append('branchId', branchId);
+  if (bankId) formData.append('bankId', bankId);
+  return apiClient
+    .post('/sales/import', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+    .then((res) => res.data);
+}

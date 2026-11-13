@@ -1,3 +1,4 @@
+import { dateLocale } from '../../i18n/translate.js';
 import React, { useEffect, useState } from 'react';
 import { searchStockHistory } from '../../api/stockHistory.js';
 import { extractErrorMessage } from '../../api/client.js';
@@ -19,7 +20,7 @@ const COLUMNS = [
   { key: 'occurredAt', header: 'Date', render: (r) => (
       <div>
         <p>{formatDate(r.occurredAt)}</p>
-        <p className="text-xs text-ink-400">{r.occurredAt ? new Date(r.occurredAt).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }) : ''}</p>
+        <p className="text-xs text-ink-400">{r.occurredAt ? new Date(r.occurredAt).toLocaleTimeString(dateLocale(), { hour: '2-digit', minute: '2-digit' }) : ''}</p>
       </div>
     ) },
   { key: 'productName', header: 'Product', render: (r) => (

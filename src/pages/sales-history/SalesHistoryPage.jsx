@@ -10,6 +10,7 @@ import Pagination from '../../components/Pagination.jsx';
 import Badge from '../../components/Badge.jsx';
 import Modal from '../../components/Modal.jsx';
 import CustomerReturnDialog from './CustomerReturnDialog.jsx';
+import ImportSalesDialog from './ImportSalesDialog.jsx';
 import { formatMoney, formatDateTime } from '../../utils/format.js';
 import SearchInput from '../../components/SearchInput.jsx';
 import ExportButton from '../../components/ExportButton.jsx';
@@ -60,6 +61,7 @@ export default function SalesHistoryPage() {
   const [detailStatus, setDetailStatus] = useState('idle');
   const [returnDialogOpen, setReturnDialogOpen] = useState(false);
   const [voidOpen, setVoidOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
 
   const load = () => {
     setStatus('loading');
@@ -98,6 +100,12 @@ export default function SalesHistoryPage() {
       <div className="card card-pad">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <SearchInput value={search} onChange={(v) => { setPage(0); setSearch(v); }} placeholder="Search sale #, customer or product…" />
+ <div className="flex flex-wrap items-center gap-2">
+          {hasPermission('POS_ACCESS') && (
+            <button type="button" onClick={() => setImportOpen(true)} className="btn btn-secondary btn-sm">
+              Import sales
+            </button>
+          )}
           <ExportButton
             title="Sales History" columns={EXPORT_COLUMNS} scoped productFilter
             dateField="createdAt" dateLabel="Sale date"
@@ -108,6 +116,7 @@ export default function SalesHistoryPage() {
               paymentStatus: paymentStatus || undefined, status: saleStatus || undefined, search: search || undefined,
             })}
           />
+          </div>
         </div>
 
         <FilterBar
@@ -214,8 +223,10 @@ export default function SalesHistoryPage() {
         )}
       </Modal>
 
+      <ImportSalesDialog open={importOpen} onClose={() => setImportOpen(false)} onImported={load} />
+
       {returnDialogOpen && selectedSale && (
-        <CustomerReturnDialog
+      <CustomerReturnDialog
           sale={selectedSale}
           onClose={() => setReturnDialogOpen(false)}
           onCompleted={() => { setReturnDialogOpen(false); setSelectedSale(null); load(); }}

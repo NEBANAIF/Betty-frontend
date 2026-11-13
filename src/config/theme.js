@@ -215,9 +215,9 @@ export const brightness = (hex) => { const [r, g, b] = toRgb(hex); return (r * 2
 const fontStack = (name) => {
   const f = FONTS.find((x) => x.name === name);
   const quoted = name.includes(' ') ? `"${name}"` : name;
-  if (f?.kind === 'serif') return `${quoted}, Georgia, ui-serif, serif`;
-  if (f?.kind === 'mono') return `${quoted}, ui-monospace, SFMono-Regular, Menlo, monospace`;
-  return `${quoted}, ui-sans-serif, system-ui, sans-serif`;
+  if (f?.kind === 'serif') return `${quoted}, 'Noto Sans Ethiopic', Georgia, ui-serif, serif`;
+  if (f?.kind === 'mono') return `${quoted}, 'Noto Sans Ethiopic', ui-monospace, SFMono-Regular, Menlo, monospace`;
+  return `${quoted}, 'Noto Sans Ethiopic', ui-sans-serif, system-ui, sans-serif`;
 };
 
 /** Fetch a Google font the first time it is needed (fonts already in index.html and system fonts are skipped). */

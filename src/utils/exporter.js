@@ -21,6 +21,10 @@
 const pad = (n) => String(n).padStart(2, '0');
 
 /** Any date / datetime value -> the user's own calendar day as 'YYYY-MM-DD' ('' if not a date). */
+import { getLanguage, tr } from '../i18n/translate.js';
+
+const trCols = (cols) => cols.map((c) => ({ ...c, header: tr(c.header) }));
+
 export function toLocalDay(value) {
   if (!value) return '';
   if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
@@ -149,7 +153,8 @@ const csvCell = (v) => {
   return /[",\n\r]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
 };
 
-export function exportCsv({ filename, columns, rows }) {
+export function exportCsv({ filename, columns: cols, rows }) {
+  const columns = trCols(cols);
   const lines = [columns.map((c) => csvCell(c.header)).join(',')];
   rows.forEach((r) => {
     lines.push(columns.map((c) => {
@@ -161,7 +166,7 @@ export function exportCsv({ filename, columns, rows }) {
   });
   const totals = totalsFor(columns, rows);
   if (totals.some((t) => t !== null)) {
-    lines.push(columns.map((c, i) => (i === 0 ? 'TOTAL' : totals[i] !== null ? String(totals[i]) : '')).join(','));
+    lines.push(columns.map((c, i) => (i === 0 ? tr('TOTAL') : totals[i] !== null ? String(totals[i]) : '')).join(','));
   }
   saveBlob(new Blob([`﻿${lines.join('\r\n')}`], { type: 'text/csv;charset=utf-8' }), `${filename}.csv`);
 }
@@ -170,7 +175,10 @@ export function exportCsv({ filename, columns, rows }) {
 
 const BRAND = { dark: 'FF4A4D2E', sage: 'FFA3A676', cream: 'FFF5F4E8', ink: 'FF2B2A20' };
 
-export async function exportExcel({ filename, title, appName, columns, rows, infoLines = [], generatedBy }) {
+export async function exportExcel({ filename, title: rawTitle, appName, columns: cols, rows, infoLines: rawInfo = [], generatedBy }) {
+  const columns = trCols(cols);
+  const title = tr(rawTitle);
+  const infoLines = rawInfo.map(tr);
   // Loaded on demand so the (large) Excel library never weighs down the normal app bundle.
   const ExcelJS = (await import('exceljs')).default;
   const wb = new ExcelJS.Workbook();
@@ -199,8 +207,8 @@ export async function exportExcel({ filename, title, appName, columns, rows, inf
 
   const meta = [
     ...infoLines,
-    `Generated: ${toLocalDay(new Date())} ${pad(new Date().getHours())}:${pad(new Date().getMinutes())}${generatedBy ? ` by ${generatedBy}` : ''}`,
-    `Rows: ${rows.length}`,
+    `${tr('Generated')}: ${toLocalDay(new Date())} ${pad(new Date().getHours())}:${pad(new Date().getMinutes())}${generatedBy ? ` ${tr('by')} ${generatedBy}` : ''}`,
+    `${tr('Rows')}: ${rows.length}`,
   ];
   meta.forEach((line, i) => {
     const r = 3 + i;
@@ -291,17 +299,20 @@ export async function exportExcel({ filename, title, appName, columns, rows, inf
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 
-export function exportPdf({ title, appName, columns, rows, infoLines = [], generatedBy }) {
+export function exportPdf({ title: rawTitle, appName, columns: cols, rows, infoLines: rawInfo = [], generatedBy }) {
+  const columns = trCols(cols);
+  const title = tr(rawTitle);
+  const infoLines = rawInfo.map(tr);
   const totals = totalsFor(columns, rows);
   const hasTotals = totals.some((t) => t !== null) && rows.length > 0;
   const right = (c) => (c.type === 'money' || c.type === 'number' ? ' class="r"' : '');
   const fmt = (c, v) => (c.type === 'money' ? toNumber(v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : toNumber(v).toLocaleString());
 
-  const html = `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title>
+  const html = `<!doctype html><html lang="${esc(getLanguage())}"><head><meta charset="utf-8"><title>${esc(title)}</title>
 <style>
   @page { size: A4 landscape; margin: 12mm; }
   * { box-sizing: border-box; }
-  body { font-family: Inter, Calibri, Arial, sans-serif; color: #2b2a20; font-size: 11px; margin: 0; }
+  body { font-family: Inter, Calibri, 'Noto Sans Ethiopic', Nyala, Arial, sans-serif; color: #2b2a20; font-size: 11px; margin: 0; }
   .brand { background: #4a4d2e; color: #fff; padding: 12px 16px; font-size: 20px; font-weight: 700; letter-spacing: .02em; }
   h1 { font-size: 16px; margin: 12px 0 4px; }
   .meta { color: #6b6a5a; font-size: 10px; line-height: 1.5; margin-bottom: 10px; }
@@ -317,12 +328,12 @@ export function exportPdf({ title, appName, columns, rows, infoLines = [], gener
 </style></head><body>
 <div class="brand">${esc(appName || 'ERP')}</div>
 <h1>${esc(title)}</h1>
-<div class="meta">${[...infoLines, `Generated: ${toLocalDay(new Date())} ${pad(new Date().getHours())}:${pad(new Date().getMinutes())}${generatedBy ? ` by ${esc(generatedBy)}` : ''}`, `Rows: ${rows.length}`].map((l) => esc(l)).join('<br>')}</div>
+<div class="meta">${[...infoLines, `${tr('Generated')}: ${toLocalDay(new Date())} ${pad(new Date().getHours())}:${pad(new Date().getMinutes())}${generatedBy ? ` ${tr('by')} ${esc(generatedBy)}` : ''}`, `${tr('Rows')}: ${rows.length}`].map((l) => esc(l)).join('<br>')}</div>
 <table><thead><tr>${columns.map((c) => `<th${right(c)}>${esc(c.header)}</th>`).join('')}</tr></thead>
 <tbody>${rows.map((r) => `<tr>${columns.map((c) => `<td${right(c)}>${esc(displayText(c, r))}</td>`).join('')}</tr>`).join('')}</tbody>
-${hasTotals ? `<tfoot><tr>${columns.map((c, i) => `<td${right(c)}>${i === 0 ? 'TOTAL' : totals[i] !== null ? fmt(c, totals[i]) : ''}</td>`).join('')}</tr></tfoot>` : ''}
+${hasTotals ? `<tfoot><tr>${columns.map((c, i) => `<td${right(c)}>${i === 0 ? tr('TOTAL') : totals[i] !== null ? fmt(c, totals[i]) : ''}</td>`).join('')}</tr></tfoot>` : ''}
 </table>
-<p class="hint">In the print window choose “Save as PDF” as the destination.</p>
+<p class="hint">${esc(tr('In the print window choose “Save as PDF” as the destination.'))}</p>
 <script>window.onload = function () { setTimeout(function () { window.focus(); window.print(); }, 250); };</script>
 </body></html>`;
 

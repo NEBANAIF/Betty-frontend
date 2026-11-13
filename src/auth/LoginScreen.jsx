@@ -1,3 +1,4 @@
+import LanguageSwitcher from '../i18n/LanguageSwitcher.jsx';
 import React from 'react';
 import Icon from '../components/Icon.jsx';
 import { cleanLogin, panelStyle, patternStyle, resolveLogin } from '../config/loginConfig.js';
@@ -62,7 +63,8 @@ export default function LoginScreen({ config, appName, preview = false, children
       style={{ background: 'var(--bg)' }}
     >
       {aside}
-      <main className="flex flex-1 items-center justify-center px-5 py-10 sm:px-8">
+      <main className="relative flex flex-1 items-center justify-center px-5 py-10 sm:px-8">
+        <div className="absolute right-4 top-4"><LanguageSwitcher /></div>
         <div className={`w-full max-w-[390px] ${c.layout === 'center' ? 'card card-pad' : ''}`}>
           <div className={`mb-8 ${c.layout === 'center' ? '' : preview ? 'hidden' : 'lg:hidden'}`}>
             <Brandmark appName={appName} tagline={c.tagline} color="var(--text)" mutedColor="var(--text-muted)" solid />

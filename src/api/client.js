@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getLanguage } from '../i18n/translate.js';
 
 // The backend issues a bearer JWT (see AuthService/JwtTokenProvider) and
 // expects it in the Authorization header - no cookie-based session exists
@@ -23,6 +24,7 @@ const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use((config) => {
+  config.headers['Accept-Language'] = getLanguage();
   const token = getToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;

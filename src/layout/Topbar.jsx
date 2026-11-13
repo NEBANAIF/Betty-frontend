@@ -4,6 +4,7 @@ import BranchSelector from '../branch/BranchSelector.jsx';
 import Icon from '../components/Icon.jsx';
 import NotificationBell from '../components/NotificationBell.jsx';
 import UserMenu from '../components/UserMenu.jsx';
+import LanguageSwitcher from '../i18n/LanguageSwitcher.jsx';
 import { NAV_SECTIONS } from '../navigation.js';
 
 export default function Topbar({ onOpenMenu }) {
@@ -40,6 +41,7 @@ export default function Topbar({ onOpenMenu }) {
       </div>
 
       <div className="flex shrink-0 items-center gap-1 sm:gap-3">
+        <LanguageSwitcher />
         <NotificationBell />
         <UserMenu />
       </div>
